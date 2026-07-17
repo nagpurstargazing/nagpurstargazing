@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nagpur Stargazing — Telescope Sky Observations &amp; Astronomy Programmes</title>
+<meta name="description" content="Nagpur Stargazing conducts interactive astronomy programmes and telescope observations for schools, colleges, communities and the general public in Nagpur, Maharashtra.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#090D22;
+    --bg-deep:#0e1634;
+    --panel: rgba(19,26,58,0.72);
+    --panel-solid:#131A3A;
+    --line: rgba(232,183,93,0.16);
+    --line-strong: rgba(232,183,93,0.32);
+    --violet:#5B4B9E;
+    --violet-soft: rgba(91,75,158,0.35);
+    --gold:#E8B75D;
+    --gold-soft: rgba(232,183,93,0.14);
+    --text:#EDEFF7;
+    --text-muted:#9AA0C4;
+    --text-faint:#6B7196;
+    --radius: 14px;
+    --maxw: 1180px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  a{color:inherit;text-decoration:none;}
+  ul{margin:0;padding:0;}
+  img{max-width:100%;display:block;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+
+  #starfield{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% -10%, #1A2350 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 90% 100%, rgba(91,75,158,0.25) 0%, transparent 60%),
+      var(--bg-deep);
+  }
+
+  .eyebrow{
+    font-family:'Space Grotesk',monospace;
+    font-size:12.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--gold);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:22px;
+    height:1px;
+    background:var(--gold);
+    display:inline-block;
+  }
+  .eyebrow .coords{
+    color:var(--text-faint);
+    font-weight:400;
+    letter-spacing:0.06em;
+  }
+
+  /* ===== NAV ===== */
+  header{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:100;
+    padding:18px 0;
+    transition:background .35s ease, padding .35s ease, border-color .35s ease;
+    border-bottom:1px solid transparent;
+  }
+  header.scrolled{
+    background:rgba(9,13,34,0.86);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding:12px 0;
+    border-bottom:1px solid var(--line);
+  }
+  nav.navbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding:0 28px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Fraunces',serif;
+    font-size:19px;
+    font-weight:600;
+    color:var(--text);
+  }
+  .brand svg{flex-shrink:0;}
+  .brand span.sub{
+    display:block;
+    font-family:'Space Grotesk',monospace;
+    font-size:9.5px;
+    letter-spacing:0.18em;
+    color:var(--gold);
+    text-transform:uppercase;
+    font-weight:500;
+  }
+  .nav-links{
+    display:flex;
+    align-items:center;
+    gap:2px;
+    list-style:none;
+  }
+  .nav-links a{
+    font-family:'Space Grotesk',monospace;
+    font-size:13.5px;
+    letter-spacing:0.03em;
+    color:var(--text-muted);
+    padding:9px 16px;
+    border-radius:999px;
+    transition:color .2s ease, background .2s ease;
+  }
+  .nav-links a:hover, .nav-links a.active{
+    color:var(--gold);
+    background:var(--gold-soft);
+  }
+  .nav-cta{
+    font-family:'Space Grotesk',monospace;
+    font-size:13px;
+    letter-spacing:0.03em;
+    color:var(--bg-deep);
+    background:var(--gold);
+    padding:10px 20px;
+    border-radius:999px;
+    font-weight:600;
+    white-space:nowrap;
+    transition:transform .2s ease, box-shadow .2s ease;
+    box-shadow:0 0 0 rgba(232,183,93,0);
+  }
+  .nav-cta:hover{transform:translateY(-1px); box-shadow:0 6px 20px rgba(232,183,93,0.25);}
+
+  .nav-toggle{
+    display:none;
+    flex-direction:column;
+    gap:5px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:6px;
+    z-index:110;
+  }
+  .nav-toggle span{
+    width:24px;height:2px;background:var(--text);
+    transition:transform .3s ease, opacity .3s ease;
+  }
+  .nav-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .nav-toggle.open span:nth-child(2){opacity:0;}
+  .nav-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+  /* ===== HERO ===== */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding-top:110px;
+    z-index:1;
+    overflow:hidden;
+  }
+  .hero-bg{
+    position:absolute;
+    inset:0;
+    z-index:-1;
+  }
+  .hero-bg video{
+    width:100%;height:100%;object-fit:cover;
+    opacity:0.38;
+    filter:saturate(1.1) brightness(0.9);
+  }
+  .hero-bg::after{
+    content:"";
+    position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(9,13,34,0.35) 0%, rgba(9,13,34,0.55) 45%, var(--bg) 100%);
+  }
+  .hero-inner{max-width:760px;}
+  .hero h1{
+    font-size:clamp(38px, 6vw, 66px);
+    line-height:1.06;
+    color:var(--text);
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--gold);
+  }
+  .hero p.lede{
+    margin-top:22px;
+    font-size:18px;
+    color:var(--text-muted);
+    max-width:540px;
+    font-weight:400;
+  }
+  .hero-actions{
+    display:flex;
+    gap:16px;
+    margin-top:36px;
+    flex-wrap:wrap;
+  }
+  .btn-primary{
+    font-family:'Space Grotesk',monospace;
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:0.02em;
+    color:var(--bg-deep);
+    background:var(--gold);
+    padding:15px 28px;
+    border-radius:999px;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 10px 30px rgba(232,183,93,0.28);}
+  .btn-ghost{
+    font-family:'Space Grotesk',monospace;
+    font-size:14px;
+    font-weight:500;
+    letter-spacing:0.02em;
+    color:var(--text);
+    border:1px solid var(--line-strong);
+    padding:14px 26px;
+    border-radius:999px;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .btn-ghost:hover{border-color:var(--gold); background:var(--gold-soft);}
+
+  .hero-stats{
+    display:flex;
+    gap:44px;
+    margin-top:64px;
+    padding-top:30px;
+    border-top:1px solid var(--line);
+    max-width:560px;
+    flex-wrap:wrap;
+  }
+  .stat b{
+    display:block;
+    font-family:'Fraunces',serif;
+    font-size:30px;
+    color:var(--gold);
+    font-weight:600;
+  }
+  .stat span{
+    font-size:12.5px;
+    color:var(--text-muted);
+    letter-spacing:0.03em;
+  }
+
+  /* ===== SECTIONS ===== */
+  section{
+    position:relative;
+    z-index:1;
+    padding:120px 0;
+  }
+  section.tight{padding:100px 0;}
+  .section-head{
+    max-width:640px;
+    margin-bottom:56px;
+  }
+  .section-head h2{
+    font-size:clamp(28px,4vw,42px);
+    color:var(--text);
+  }
+  .section-head p{
+    margin-top:16px;
+    color:var(--text-muted);
+    font-size:16px;
+  }
+
+  /* About */
+  .about-grid{
+    display:grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap:64px;
+    align-items:center;
+  }
+  .about-text p{color:var(--text-muted); margin:0 0 16px;}
+  .about-text strong{color:var(--text); font-weight:600;}
+  .about-media{
+    position:relative;
+    border-radius:var(--radius);
+    overflow:hidden;
+    border:1px solid var(--line);
+    aspect-ratio: 4/3.1;
+  }
+  .about-media img{width:100%;height:100%;object-fit:cover;}
+  .about-media::after{
+    content:"";
+    position:absolute;inset:0;
+    box-shadow:inset 0 0 60px rgba(9,13,34,0.5);
+  }
+  .badge-founder{
+    position:absolute;
+    left:16px; bottom:16px;
+    background:rgba(9,13,34,0.78);
+    backdrop-filter:blur(8px);
+    border:1px solid var(--line);
+    padding:12px 16px;
+    border-radius:10px;
+    font-family:'Space Grotesk',monospace;
+    font-size:11.5px;
+    color:var(--text-muted);
+    letter-spacing:0.02em;
+    max-width:230px;
+  }
+  .badge-founder b{color:var(--gold); display:block; font-size:12px; margin-bottom:2px;}
+
+  /* Mission */
+  .mission{
+    background:linear-gradient(180deg, transparent, rgba(19,26,58,0.35), transparent);
+  }
+  .mission-list{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .mission-item{
+    background:var(--panel-solid);
+    padding:28px 26px;
+    display:flex;
+    gap:16px;
+    align-items:flex-start;
+  }
+  .mission-item .num{
+    font-family:'Space Grotesk',monospace;
+    font-size:12px;
+    color:var(--gold);
+    border:1px solid var(--line-strong);
+    border-radius:50%;
+    width:30px;height:30px;
+    flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .mission-item p{margin:0; color:var(--text-muted); font-size:15px; padding-top:4px;}
+
+  /* Programmes */
+  .prog-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:26px;
+  }
+  .prog-card{
+    background:var(--panel-solid);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    transition:transform .3s ease, border-color .3s ease;
+  }
+  .prog-card:hover{transform:translateY(-6px); border-color:var(--line-strong);}
+  .prog-media{aspect-ratio:4/3; overflow:hidden;}
+  .prog-media img{width:100%;height:100%;object-fit:cover; transition:transform .5s ease;}
+  .prog-card:hover .prog-media img{transform:scale(1.06);}
+  .prog-body{padding:26px;}
+  .prog-body h3{font-size:19px; margin-bottom:10px; color:var(--text);}
+  .prog-body p{margin:0; color:var(--text-muted); font-size:14.5px;}
+
+  /* Gallery */
+  .gallery-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    grid-auto-rows:150px;
+    gap:10px;
+  }
+  .gallery-grid a{
+    border-radius:10px;
+    overflow:hidden;
+    display:block;
+    border:1px solid var(--line);
+    position:relative;
+  }
+  .gallery-grid img{width:100%;height:100%;object-fit:cover; transition:transform .5s ease;}
+  .gallery-grid a:hover img{transform:scale(1.08);}
+  .gallery-grid a::after{
+    content:"";
+    position:absolute;inset:0;
+    background:linear-gradient(180deg, transparent 60%, rgba(9,13,34,0.6));
+    opacity:0;
+    transition:opacity .3s ease;
+  }
+  .gallery-grid a:hover::after{opacity:1;}
+  .g-tall{grid-row:span 2;}
+  .g-wide{grid-column:span 2;}
+
+  /* Contact */
+  .contact-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:64px;
+  }
+  .contact-list{list-style:none;}
+  .contact-list li{
+    display:flex;
+    gap:18px;
+    padding:22px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .contact-list li:first-child{padding-top:0;}
+  .contact-list .icon{
+    width:42px;height:42px;
+    border-radius:10px;
+    background:var(--gold-soft);
+    border:1px solid var(--line-strong);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    color:var(--gold);
+  }
+  .contact-list h4{font-size:15px; color:var(--text); margin-bottom:4px; font-family:'Inter',sans-serif; font-weight:600;}
+  .contact-list p, .contact-list a{color:var(--text-muted); font-size:14.5px; margin:0;}
+  .contact-list a:hover{color:var(--gold);}
+  .contact-card{
+    background:var(--panel-solid);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:36px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    text-align:center;
+    background-image: radial-gradient(circle at 50% 0%, rgba(91,75,158,0.25), transparent 60%);
+  }
+  .contact-card h3{font-size:24px; margin-bottom:12px;}
+  .contact-card p{color:var(--text-muted); font-size:15px; margin-bottom:26px;}
+
+  footer{
+    position:relative; z-index:1;
+    border-top:1px solid var(--line);
+    padding:36px 0;
+  }
+  .footer-inner{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  .footer-inner p{color:var(--text-faint); font-size:13px; margin:0;}
+  .footer-links{display:flex; gap:20px; list-style:none;}
+  .footer-links a{color:var(--text-faint); font-size:13px;}
+  .footer-links a:hover{color:var(--gold);}
+
+  @media (max-width: 880px){
+    .about-grid{grid-template-columns:1fr; gap:40px;}
+    .prog-grid{grid-template-columns:1fr;}
+    .mission-list{grid-template-columns:1fr;}
+    .contact-grid{grid-template-columns:1fr; gap:40px;}
+    .gallery-grid{grid-template-columns:repeat(2,1fr);}
+    .g-wide{grid-column:span 1;}
+  }
+
+  @media (max-width: 720px){
+    .nav-links, .nav-cta{display:none;}
+    .nav-toggle{display:flex;}
+    .nav-links.mobile-open{
+      display:flex;
+      position:fixed;
+      top:0; right:0;
+      height:100vh;
+      width:78%;
+      max-width:320px;
+      background:rgba(9,13,34,0.97);
+      backdrop-filter:blur(16px);
+      flex-direction:column;
+      align-items:flex-start;
+      padding:100px 32px 32px;
+      gap:6px;
+      border-left:1px solid var(--line);
+      z-index:105;
+    }
+    .nav-links.mobile-open a{width:100%; padding:14px 6px; font-size:16px; border-radius:0; border-bottom:1px solid var(--line);}
+    .hero-stats{gap:28px;}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+
+<header id="siteHeader">
+  <nav class="navbar">
+    <a href="#home" class="brand">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#E8B75D" stroke-width="1.3"/><circle cx="12" cy="12" r="2.4" fill="#E8B75D"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3" stroke="#E8B75D" stroke-width="1.1" stroke-linecap="round"/></svg>
+      <span>Nagpur Stargazing<span class="sub">Astronomy Experiences . Space Education · Astrotourism</span></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#mission">Mission</a></li>
+      <li><a href="#programmes">Programmes</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="https://wa.me/918412835332" class="nav-cta" target="_blank" rel="noopener">Book a Session</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- HOME -->
+  <section id="home" class="hero">
+    <div class="hero-bg">
+      <video autoplay loop muted playsinline poster="" src="https://blobby.wsimg.com/getty/videos/473223399"></video>
+    </div>
+    <div class="wrap hero-inner">
+      <div class="eyebrow">21.15° N, 79.09° E <span class="coords">— Nagpur, Maharashtra</span></div>
+      <h1>Welcome to <em>Nagpur&nbsp;Stargazing</em></h1>
+      <p class="lede">Exlore the Wonders of the Universe Through Our Telescopes. Experience the Moon, Saturn, Jupiter, Star Clusters and Deep-Sky Objecta with expert guided astronomy sessions for schools, colleges, societies and the general public.</p>
+      <div class="hero-actions">
+        <a href="https://wa.me/918412835332" target="_blank" rel="noopener" class="btn-primary">Book a stargazing session →</a>
+        <a href="#programmes" class="btn-ghost">Explore programmes</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><b>1000+</b><span>Participants</span></div>
+        <div class="stat"><b>100+</b><span>Astronomy sessions</span></div>
+        <div class="stat"><b>Advanced telescopes</b><span></span></div>
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="wrap about-grid">
+      <div>
+        <div class="eyebrow">The Observers</div>
+        <h2 class="section-head" style="margin-bottom:24px;">About Nagpur Stargazing</h2>
+        <div class="about-text">
+          <p><strong>Nagpur Stargazing</strong> is an astronomy outreach initiative based in Nagpur, Maharashtra, dedicated to making astronomy accessible, engaging and inspiring for everyone.</p>
+          <p>Founded by a team of passionate amateur astronomers and science communicators, we bridge the gap between textbooks and the real night sky through interactive learning and telescope observations, designed for students, teachers, families and anyone curious about the Universe.</p>
+          <p>Every session combines scientific knowledge with practical observation — allowing participants to experience celestial objects firsthand through professional-grade telescopes, from the Moon's craters to the rings of Saturn.</p>
+        </div>
+      </div>
+      <div class="about-media">
+        <img src="https://img1.wsimg.com/isteam/ip/0e6eeb32-681a-4832-8039-55453200215f/blob-b0e59d5.png/:/rs=w:800,h:601,cg:true,m/cr=w:800,h:601" alt="Telescope observation session under the night sky" loading="lazy">
+        <div class="badge-founder"><b>Founder's background</b>Astronomy &amp; public science communication experience via Raman Science Centre and Planetarium, Nagpur.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISSION -->
+  <section id="mission" class="mission tight">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Guiding Stars</div>
+        <h2>Our Mission</h2>
+        <p>six commitments that shape every session we run, from a single classroom to an open public evening.</p>
+      </div>
+      <div class="mission-list">
+        <div class="mission-item"><span class="num">01</span><p>To make astronomy enjoyable and accessible for people of all ages through interactive learning and telescope observations.</p></div>
+        <div class="mission-item"><span class="num">02</span><p>To foster scientific temper, critical thinking and a spirit of exploration among students and the general public.</p></div>
+        <div class="mission-item"><span class="num">03</span><p>To provide unforgettable hands-on experiences through guided telescope observations and practical astronomy activities.</p></div>
+        <div class="mission-item"><span class="num">05</span><p>To spread awareness about light pollution and promote the preservation of our natural night skies.</p></div>
+        <div class="mission-item"><span class="num">04</span><p>To help people reconnect with the beauty of the night sky and understand our place in the Universe..</p></div>
+        <div class="mission-item"><span class="num">06</span><p>To create memorable astronomy experiences that educate, inspire, and bring people together under the stars.</p></div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRAMMES -->
+  <section id="programmes">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Sessions</div>
+        <h2>Our Programmes</h2>
+        <p>Every format pairs a guided presentation with live telescope time under the open sky.</p>
+      </div>
+      <div class="prog-grid">
+        <div class="prog-card">
+          <div class="prog-media"><img src="https://img1.wsimg.com/isteam/ip/0e6eeb32-681a-4832-8039-55453200215f/IMG_9816.jpg" alt="Students observing the sky through a telescope" loading="lazy"></div>
+          <div class="prog-body">
+            <h3>School Astronomy Programme</h3>
+            <p>Interactive sessions designed for students, including astronomy presentations, telescope demonstrations, and guided night-sky observation.</p>
+          </div>
+        </div>
+        <div class="prog-card">
+          <div class="prog-media"><img src="images/customised group session.JPG" alt="Group astronomy session with telescope" loading="lazy"></div>
+          <div class="prog-body">
+            <h3>Customized Group Sessions</h3>
+            <p>Tailored programmes for colleges, organisations, housing societies and private groups of any size.</p>
+          </div>
+        </div>
+        <div class="prog-card">
+          <div class="prog-media"><img src="images/public stargazing session.JPG" alt="Public stargazing event at night" loading="lazy"></div>
+          <div class="prog-body">
+            <h3>Public Stargazing</h3>
+            <p>Open events where families, students and astronomy enthusiasts experience celestial objects through telescopes together.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery" class="tight">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Field Notes</div>
+        <h2>Gallery</h2>
+        <p>Moments from recent sessions — telescopes, clear skies and curious crowds.</p>
+      </div>
+      <div class="gallery-grid">
+        <a href="images/g1.JPG" target="_blank" rel="noopener" class="g-tall g-wide">
+          <img src="images/g1.JPG" alt="Nagpur Stargazing event photo" loading="lazy">
+        </a>
+        <a href="images/g2.JPG" target="_blank" rel="noopener">
+          <img src="images/g2.JPG" alt="Nagpur Stargazing telescope setup" loading="lazy">
+        </a>
+        <a href="images/g3.JPG" target="_blank" rel="noopener">
+          <img src="images/g3.JPG" alt="Astronomy session with students" loading="lazy">
+        </a>
+        <a href="images/g4.JPG" target="_blank" rel="noopener" class="g-wide">
+          <img src="images/g4.JPG" alt="Group astronomy session" loading="lazy">
+        </a>
+        <a href="images/g5.JPG" target="_blank" rel="noopener">
+          <img src="images/g5.JPG" alt="Public stargazing night event" loading="lazy">
+        </a>
+        <a href="images/g6.JPG" target="_blank" rel="noopener">
+          <img src="images/g6.JPG" alt="Public stargazing night event" loading="lazy">
+        </a>
+        <a href="images/g7.JPG" target="_blank" rel="noopener">
+          <img src="images/g7.JPG" alt="Public stargazing night event" loading="lazy">
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="tight">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Coordinates</div>
+        <h2>Contact Us</h2>
+        <p>Have a school, society or private group in mind? Reach out and we'll help you plan a session.</p>
+      </div>
+      <div class="contact-grid">
+        <ul class="contact-list">
+          <li>
+            <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 6h16v12H4z" stroke="currentColor" stroke-width="1.4"/><path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.4"/></svg></span>
+            <div><h4>Email</h4><a href="mailto:nagpurstargazing@gmail.com">nagpurstargazing@gmail.com</a></div>
+          </li>
+          <li>
+            <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 3h3l2 5-2 1a12 12 0 0 0 6 6l1-2 5 2v3a2 2 0 0 1-2 2C11.6 20 4 12.4 4 5a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="1.3"/></svg></span>
+            <div><h4>Phone</h4><p><a href="tel:8412835332">84128 35332</a> / <a href="tel:8862090941">88620 90941</a></p></div>
+          </li>
+          <li>
+            <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.3"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.3"/></svg></span>
+            <div><h4>Hours</h4><p>Open today · 09:00 am – 05:00 pm</p></div>
+          </li>
+          <li>
+            <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="9" r="2.3" stroke="currentColor" stroke-width="1.3"/></svg></span>
+            <div><h4>Location</h4><p>Nagpur, Maharashtra, India</p></div>
+          </li>
+        </ul>
+        <div class="contact-card">
+          <h3>Ready to look up?</h3>
+          <p>Message us on WhatsApp for the fastest response, or drop us an email to plan a school, group or public session.</p>
+          <a href="https://wa.me/918412835332" target="_blank" rel="noopener" class="btn-primary" style="justify-content:center;">Chat on WhatsApp →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <p>© 2026 Nagpur Stargazing — All Rights Reserved.</p>
+    <ul class="footer-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#programmes">Programmes</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+  // Sticky header state
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  }, {passive:true});
+
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => {
+    navToggle.classList.toggle('open');
+    navLinks.classList.toggle('mobile-open');
+  });
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navToggle.classList.remove('open');
+    navLinks.classList.remove('mobile-open');
+  }));
+
+  // Active link highlight on scroll
+  const sections = document.querySelectorAll('main section[id]');
+  const links = document.querySelectorAll('.nav-links a');
+  const onScroll = () => {
+    let current = '';
+    sections.forEach(sec => {
+      const rect = sec.getBoundingClientRect();
+      if (rect.top <= 120 && rect.bottom >= 120) current = sec.id;
+    });
+    links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + current));
+  };
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  // Starfield canvas
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = document.documentElement.scrollHeight;
+    const count = Math.floor((canvas.width * Math.min(canvas.height, 3000)) / 9000);
+    stars = Array.from({length: count}, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.3 + 0.3,
+      base: Math.random() * 0.5 + 0.3,
+      speed: Math.random() * 0.015 + 0.005,
+      phase: Math.random() * Math.PI * 2
+    }));
+  }
+
+  function draw(t){
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    for (const s of stars){
+      const twinkle = reduceMotion ? s.base : s.base + Math.sin(t * s.speed + s.phase) * 0.35;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(237,239,247,${Math.max(0, Math.min(1, twinkle))})`;
+      ctx.fill();
+    }
+    if (!reduceMotion) requestAnimationFrame(draw);
+  }
+
+  resize();
+  draw(0);
+  window.addEventListener('resize', resize);
+</script>
+
+</body>
+</html>
