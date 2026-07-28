@@ -417,44 +417,6 @@
   .g-tall{grid-row:span 2;}
   .g-wide{grid-column:span 2;}
   
-   /* About */
-  .about-grid{
-    display:grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap:64px;
-    align-items:center;
-  }
-  .about-text p{color:var(--text-muted); margin:0 0 16px;}
-  .about-text strong{color:var(--text); font-weight:600;}
-  .about-media{
-    position:relative;
-    border-radius:var(--radius);
-    overflow:hidden;
-    border:1px solid var(--line);
-    aspect-ratio: 4/3.1;
-  }
-  .about-media img{width:100%;height:100%;object-fit:cover;}
-  .about-media::after{
-    content:"";
-    position:absolute;inset:0;
-    box-shadow:inset 0 0 60px rgba(9,13,34,0.5);
-  }
-  .badge-founder{
-    position:absolute;
-    left:16px; bottom:16px;
-    background:rgba(9,13,34,0.78);
-    backdrop-filter:blur(8px);
-    border:1px solid var(--line);
-    padding:12px 16px;
-    border-radius:10px;
-    font-family:'Space Grotesk',monospace;
-    font-size:11.5px;
-    color:var(--text-muted);
-    letter-spacing:0.02em;
-    max-width:230px;
-  }
-  .badge-founder b{color:var(--gold); display:block; font-size:12px; margin-bottom:2px;}
-
   /* Contact */
   .contact-grid{
     display:grid;
@@ -703,24 +665,7 @@
       </div>
     </div>
   </section>
- <!-- ABOUT -->
-  <section id="about">
-    <div class="wrap about-grid">
-      <div>
-        <div class="eyebrow">The Observers</div>
-        <h2 class="section-head" style="margin-bottom:24px;">About Nagpur Stargazing</h2>
-        <div class="about-text">
-          <p><strong>Nagpur Stargazing</strong> is an astronomy outreach initiative based in Nagpur, Maharashtra, dedicated to making astronomy accessible, engaging and inspiring for everyone.</p>
-          <p>Founded by a team of passionate amateur astronomers and science communicators, we bridge the gap between textbooks and the real night sky through interactive learning and telescope observations, designed for students, teachers, families and anyone curious about the Universe.</p>
-          <p>Every session combines scientific knowledge with practical observation — allowing participants to experience celestial objects firsthand through professional-grade telescopes, from the Moon's craters to the rings of Saturn.</p>
-        </div>
-      </div>
-      <div class="about-media">
-        <img src="https://img1.wsimg.com/isteam/ip/0e6eeb32-681a-4832-8039-55453200215f/blob-b0e59d5.png/:/rs=w:800,h:601,cg:true,m/cr=w:800,h:601" alt="Telescope observation session under the night sky" loading="lazy">
-        <div class="badge-founder"><b>Founder's background</b>Astronomy &amp; public science communication experience via Raman Science Centre and Planetarium, Nagpur.</div>
-      </div>
-    </div>
-  </section>
+ 
   <!-- CONTACT -->
   <section id="contact" class="tight">
     <div class="wrap">
